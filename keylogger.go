@@ -177,6 +177,22 @@ func (k *KeyLogger) WriteOnce(key string) error {
 	return k.syn()
 }
 
+// WriteOnce method simulates single key press
+// When you send a key, it will press it, release it and send to sync
+func (k *KeyLogger) WriteOnceCode(code uint16) error {
+	for _, i := range []int32{int32(KeyPress), int32(KeyRelease)} {
+		err := k.write(InputEvent{
+			Type:  EvKey,
+			Code:  code,
+			Value: i,
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return k.syn()
+}
+
 // read from file description and parse binary into go struct
 func (k *KeyLogger) read() (*InputEvent, error) {
 	buffer := make([]byte, eventsize)
